@@ -1,7 +1,7 @@
 // Enum!
 enum ProjectStatus {
-  active,
-  finished,
+  Active,
+  Finished,
 }
 // Custom Project Class
 class Project {
@@ -14,14 +14,20 @@ class Project {
   ) {}
 }
 // Custom Type for listener - set function outcome to void to say we are not expecting a return
-type Listener = (items: Project[]) => void;
-
+type Listener<T> = (items: T[]) => void;
+class State<T> {
+  protected listeners: Listener<T>[] = [];
+  addListener(listenerFn: Listener<T>) {
+    this.listeners.push(listenerFn);
+  }
+}
 // Project State Management
-class ProjectState {
-  private listeners: Listener[] = [];
+class ProjectState extends State<Project> {
   private projects: Project[] = [];
   private static instance: ProjectState;
-  private constructor() {}
+  private constructor() {
+    super();
+  }
   static getInstance() {
     if (this.instance) {
       return this.instance;
@@ -29,16 +35,14 @@ class ProjectState {
     this.instance = new ProjectState();
     return this.instance;
   }
-  addListener(listenerFn: Listener) {
-    this.listeners.push(listenerFn);
-  }
+
   addProject(title: string, description: string, numOfPeople: number) {
     const newProject = new Project(
       Math.random().toString(),
       title,
       description,
       numOfPeople,
-      ProjectStatus.active
+      ProjectStatus.Active
     );
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
@@ -75,13 +79,13 @@ function validate(validatableInput: Validatable) {
     typeof validatableInput.value === "string"
   ) {
     isValid =
-      isValid && validatableInput.value.length < validatableInput.maxLength;
+      isValid && validatableInput.value.length <= validatableInput.maxLength;
   }
   if (
     validatableInput.min != null &&
     typeof validatableInput.value === "number"
   ) {
-    isValid = isValid && validatableInput.value > validatableInput.min;
+    isValid = isValid && validatableInput.value >= validatableInput.min;
   }
   if (
     validatableInput.max != null &&
@@ -103,7 +107,6 @@ function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
   };
   return adjustedDescriptor;
 }
-
 // Class for inheritance - Abstract so that it cannot be instantiated
 abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
@@ -138,7 +141,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     );
   }
   abstract configure(): void;
-  abstract renderList(): void;
+  abstract renderContent(): void;
 }
 // Project List Class
 class ProjectList extends Component<HTMLDivElement, HTMLElement> {
@@ -147,21 +150,22 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     super("project-list", "app", false, `${type}-projects`);
     this.assignedProjects = [];
     this.configure();
-    this.renderProjects();
+    this.renderContent();
   }
+  //   Public
   configure() {
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter((project) => {
         if (this.type === "active") {
-          return project.status === ProjectStatus.active;
+          return project.status === ProjectStatus.Active;
         }
-        return project.status === ProjectStatus.finished;
+        return project.status === ProjectStatus.Finished;
       });
       this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
   }
-  renderList() {
+  renderContent() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector("ul")!.id = listId;
     this.element.querySelector("h2")!.textContent =
@@ -202,7 +206,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   configure() {
     this.element.addEventListener("submit", this.submitHandler);
   }
-  renderList() {}
+  renderContent() {}
   // Private Methods
   private getUserInput(): [string, string, number] | void {
     const enteredTitle = this.titleInputElement.value;
