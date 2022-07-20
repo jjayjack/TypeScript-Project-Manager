@@ -1,9 +1,5 @@
 // AutoBind Decorator
-function autoBind(
-  target: any,
-  methodName: string,
-  descriptor: PropertyDescriptor
-) {
+function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjustedDescriptor: PropertyDescriptor = {
     configurable: true,
