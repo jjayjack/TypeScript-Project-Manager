@@ -149,7 +149,24 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     this.configure();
     this.renderProjects();
   }
-
+  configure() {
+    projectState.addListener((projects: Project[]) => {
+      const relevantProjects = projects.filter((project) => {
+        if (this.type === "active") {
+          return project.status === ProjectStatus.active;
+        }
+        return project.status === ProjectStatus.finished;
+      });
+      this.assignedProjects = relevantProjects;
+      this.renderProjects();
+    });
+  }
+  renderList() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
   //   Render Projects
   private renderProjects() {
     const listEl = document.getElementById(
@@ -162,37 +179,14 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
       listEl.appendChild(listItem);
     }
   }
-  configure() {}
-  renderList() {
-    const listId = `${this.type}-projects-list`;
-    this.element.querySelector("ul")!.id = listId;
-    this.element.querySelector("h2")!.textContent =
-      this.type.toUpperCase() + " PROJECTS";
-  }
 }
 //Project Input class
-class ProjectInput {
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLFormElement;
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
   peopleInputElement: HTMLInputElement;
   constructor() {
-    this.templateElement = <HTMLTemplateElement>(
-      document.getElementById("project-input")!
-    );
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
-    // Render HTML to DOM
-    const importedHTMLContent = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    // this.element = form element
-    this.element = importedHTMLContent.firstElementChild as HTMLFormElement;
-    // Adding CSS to element created
-    this.element.id = "user-input";
-    // Get access to inputs
+    super("project-input", "app", true, "user-input");
     this.titleInputElement = this.element.querySelector(
       "#title"
     ) as HTMLInputElement;
@@ -203,8 +197,13 @@ class ProjectInput {
       "#people"
     ) as HTMLInputElement;
     this.configure();
-    this.attach();
   }
+  //   Public Methods
+  configure() {
+    this.element.addEventListener("submit", this.submitHandler);
+  }
+  renderList() {}
+  // Private Methods
   private getUserInput(): [string, string, number] | void {
     const enteredTitle = this.titleInputElement.value;
     const enteredDescription = this.descriptionInputElement.value;
@@ -250,12 +249,6 @@ class ProjectInput {
       projectState.addProject(title, desc, people);
       this.clearInput();
     }
-  }
-  private configure() {
-    this.element.addEventListener("submit", this.submitHandler);
-  }
-  private attach() {
-    this.hostElement.insertAdjacentElement("afterbegin", this.element);
   }
 }
 
