@@ -1,7 +1,7 @@
 // Enum!
 enum ProjectStatus {
-  Active,
-  Finished,
+  active,
+  finished,
 }
 // Custom Type for listener - set function outcome to void to say we are not expecting a return
 type Listener = (items: Project[]) => void;
@@ -38,7 +38,7 @@ class ProjectState {
       title,
       description,
       numOfPeople,
-      ProjectStatus.Active
+      ProjectStatus.active
     );
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
@@ -126,7 +126,13 @@ class ProjectList {
     this.element.id = `${this.type}-projects`;
     // Overriding project to project state
     projectState.addListener((projects: Project[]) => {
-      this.assignedProjects = projects;
+      const relevantProjects = projects.filter((project) => {
+        if (this.type === "active") {
+          return project.status === ProjectStatus.active;
+        }
+        return project.status === ProjectStatus.finished;
+      });
+      this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
     this.attach();
@@ -137,6 +143,7 @@ class ProjectList {
     const listEl = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement;
+    listEl.innerHTML = "";
     for (const projectItem of this.assignedProjects) {
       const listItem = document.createElement("li");
       listItem.textContent = projectItem.title;
