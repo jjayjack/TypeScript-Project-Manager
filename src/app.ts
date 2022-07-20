@@ -3,8 +3,6 @@ enum ProjectStatus {
   active,
   finished,
 }
-// Custom Type for listener - set function outcome to void to say we are not expecting a return
-type Listener = (items: Project[]) => void;
 // Custom Project Class
 class Project {
   constructor(
@@ -15,6 +13,8 @@ class Project {
     public status: ProjectStatus
   ) {}
 }
+// Custom Type for listener - set function outcome to void to say we are not expecting a return
+type Listener = (items: Project[]) => void;
 
 // Project State Management
 class ProjectState {
@@ -146,18 +146,10 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
   constructor(private type: "active" | "finished") {
     super("project-list", "app", false, `${type}-projects`);
     this.assignedProjects = [];
-    projectState.addListener((projects: Project[]) => {
-      const relevantProjects = projects.filter((project) => {
-        if (this.type === "active") {
-          return project.status === ProjectStatus.active;
-        }
-        return project.status === ProjectStatus.finished;
-      });
-      this.assignedProjects = relevantProjects;
-      this.renderProjects();
-    });
-    this.renderList();
+    this.configure();
+    this.renderProjects();
   }
+
   //   Render Projects
   private renderProjects() {
     const listEl = document.getElementById(
@@ -170,6 +162,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
       listEl.appendChild(listItem);
     }
   }
+  configure() {}
   renderList() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector("ul")!.id = listId;
