@@ -50,5 +50,5 @@ export class ProjectState extends State<Project> {
     }
   }
 }
-// Global instance of project state
+// Global instance of project state -- ONLY runs once
 export const projectState = ProjectState.getInstance();
