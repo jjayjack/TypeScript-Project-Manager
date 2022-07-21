@@ -10,6 +10,10 @@ TypeScript project to impliment useage of recently learned TypeScript concepts. 
 
 Groups code within file folder structure. TypeScript will compile all into one file. Separate files must be named the same for import / export to work. In this project, App was used as the common namespace name. Along with naming conventions, the tsconfig file must be updated to include `outFile` which tells JavaScript to concatonate namespaces into one single JavaScript file. Also need to update `"module"` from `commonjs` to `amd`. Last update is to HTML file with importing new bundle JavaScript file.
 
+#### Disadvantages of Namespaces
+
+Compiles without errors even if one of the imports is not imported.
+
 ### ES 6 Modules / Imports & Exports
 
-Browsers manage files by eac h file being compiled into single import
+Browsers manage files by each file being compiled into single import.
