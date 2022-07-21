@@ -1,21 +1,7 @@
-/// <reference path = "drag-drop-interfaces.ts"/>
 // Connecting export to full app
+/// <reference path = "drag-drop-interfaces.ts"/>
+/// <reference path = "project-model.ts"/>
 namespace App {
-  // Enum!
-  enum ProjectStatus {
-    Active,
-    Finished,
-  }
-  // Custom Project Class
-  class Project {
-    constructor(
-      public id: string,
-      public title: string,
-      public description: string,
-      public people: number,
-      public status: ProjectStatus
-    ) {}
-  }
   // Custom Type for listener - set function outcome to void to say we are not expecting a return
   type Listener<T> = (items: T[]) => void;
   class State<T> {
