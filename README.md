@@ -16,4 +16,5 @@ Compiles without errors even if one of the imports is not imported.
 
 ### ES 6 Modules / Imports & Exports
 
-Browsers manage files by each file being compiled into single import.
+Preferred method of utilizing separate files to be compiled into one JavaScript file. Benefit is that user will receive compiling error due to import not being available.
+Browsers manage files by each file being compiled into single import. tsconfig file must be updated to `module`:`es2015` and disable `outFile`. Next replace script source within `HTML` file back to app.js and remove defer tag. Then add `type="module"` as attribute to script source.
