@@ -1,5 +1,9 @@
 // Class for inheritance - Abstract so that it cannot be instantiated
-export abstract class Component<T extends HTMLElement, U extends HTMLElement> {
+// default sets up the main export for file - MUST change imports
+export default abstract class Component<
+  T extends HTMLElement,
+  U extends HTMLElement
+> {
   templateElement: HTMLTemplateElement;
   hostElement: T;
   element: U;

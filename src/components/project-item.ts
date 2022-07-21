@@ -1,7 +1,7 @@
 // ES 6 Module
 import { Draggable } from "../models/drag-drop.js";
 import { Project } from "../models/project.js";
-import { Component } from "./base.js";
+import Component from "./base.js";
 import { autoBind } from "../decorators/autobind.js";
 
 // Project Item Class
